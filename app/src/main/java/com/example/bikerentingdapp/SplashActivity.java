@@ -1,0 +1,70 @@
+package com.example.bikerentingdapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+
+import com.example.bikerentingdapp.UserManagement.SigninActivity;
+import com.example.bikerentingdapp.UserManagement.UserProfilePage;
+import com.example.bikerentingdapp.databinding.ActivitySplashBinding;
+import com.google.firebase.auth.FirebaseAuth;
+
+public class SplashActivity extends AppCompatActivity {
+
+    ActivitySplashBinding binding;
+    Animation topAnim,bottomAnim;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding=ActivitySplashBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        // Hide Actionbar
+        getSupportActionBar().hide();
+        //line to hide status bar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //Adding Resources
+        binding.logoImg.setImageResource(R.drawable.logo);
+        binding.nameL.setImageResource(R.drawable.name);
+        //Assigning values to animation variables
+        topAnim= AnimationUtils.loadAnimation(this,R.anim.top_animation);
+        bottomAnim= AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
+        //Assigning Animations to image and textview
+        binding.logoImg.setAnimation(topAnim);
+        binding.nameL.setAnimation(bottomAnim);
+        //Setting Animation
+
+        binding.logoImg.animate().translationY(2000).setDuration(1000).setStartDelay(4000);
+        binding.nameL.animate().translationY(2000).setDuration(1000).setStartDelay(4000);
+        binding.anim2.animate().translationY(1600).setDuration(1000).setStartDelay(5000);
+        //To set delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                    Intent intent = new Intent(SplashActivity.this,
+//                            SigninActivity.class);
+//                    startActivity(intent);
+//                    finish();
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                //For Email Verification and keep user login
+                if(auth.getCurrentUser()!=null && auth.getCurrentUser().isEmailVerified() )
+                {
+                    Intent intent = new Intent(SplashActivity.this,
+                            UserProfilePage.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Intent intent=new Intent(SplashActivity.this, SigninActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        },5000);
+
+    }
+}
